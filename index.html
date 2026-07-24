@@ -1,167 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>CineWall HD</title>
-
-  <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
-  <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#111">
+<title>CineWall HD</title>
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Patrick Hand',cursive}
+body{background:#101010;color:#fff;text-align:center;min-height:100vh}
+body.lock{overflow:hidden}
+header{padding:28px 16px 12px}h1{font-size:clamp(44px,8vw,64px);margin-bottom:18px}
+#search{width:min(92%,580px);padding:14px 16px;border:0;border-radius:10px;font-size:20px;outline:none}
+nav{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;padding:10px 14px 20px}
+nav button{padding:10px 15px;border:0;border-radius:9px;background:#fff;color:#111;font-size:17px;cursor:pointer}
+nav button.active{background:#ff9800;color:#fff}
+#count{color:#bbb;font-size:18px;margin-bottom:8px}
+#gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;max-width:1250px;margin:auto;padding:18px}
+.card{background:#202020;padding:14px;border-radius:15px;box-shadow:0 0 17px rgba(255,255,255,.07)}
+.wrap{position:relative;overflow:hidden;border-radius:11px;background:#171717}
+.card img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;cursor:pointer;background:#171717}
+.missing{display:none;position:absolute;left:10px;right:10px;bottom:10px;background:rgba(0,0,0,.75);padding:7px;border-radius:8px;font-size:15px;word-break:break-word}
+.card.bad .missing{display:block}
+.card h3{font-size:24px;margin:12px 0 3px}.cat{color:#bbb;margin-bottom:10px}
+.buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.action{min-height:47px;border:0;border-radius:8px;color:#fff;font-size:18px;cursor:pointer}
+.download{grid-column:1/-1;background:#ff9800}.full{background:#159fea}.wa{background:#00d65a}
+#none{display:none;padding:55px 20px;font-size:25px}
+footer{padding:34px 16px 42px;font-size:22px}footer a{color:#00bfff;text-decoration:none;font-size:24px}
+.viewer{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.95);z-index:9999;padding:58px 18px 20px}
+.viewer img{max-width:95vw;max-height:87vh;border-radius:10px;object-fit:contain}
+.close{position:fixed;top:10px;right:18px;border:0;background:none;color:#fff;font-size:46px;cursor:pointer}
+@media(max-width:600px){#gallery{grid-template-columns:1fr;padding:15px}nav button{font-size:16px;padding:9px 13px}}
+</style>
 </head>
-
 <body>
-  <header>
-    <h1>CineWall HD</h1>
+<header><h1>CineWall HD</h1><input id="search" type="search" placeholder="Search Wallpapers..." autocomplete="off"></header>
+<nav id="filters">
+<button class="active" data-cat="All">All</button>
+<button data-cat="Heroes">Heroes</button>
+<button data-cat="Heroines">Heroines</button>
+<button data-cat="Gods">Gods</button>
+<button data-cat="Vehicles">Vehicles</button>
+<button data-cat="Nature">Nature</button>
+<button data-cat="Animals">Animals</button>
+<button data-cat="Birds">Birds</button>
+</nav>
+<p id="count"></p>
+<main id="gallery"></main>
+<div id="none">No wallpapers found.</div>
+<div id="viewer" class="viewer"><button class="close" onclick="closeViewer()">&times;</button><img id="viewerImg" alt="Wallpaper preview"></div>
+<footer><p>More Wallpapers Coming Soon ❤️</p><a href="https://instagram.com/Manohar_162" target="_blank" rel="noopener">Follow @Manohar_162</a></footer>
+<script>
+const wallpapers=[{"title": "Chiranjeevi", "category": "Heroes", "image": "chiranjeevi.jpg"}, {"title": "Pawan Kalyan", "category": "Heroes", "image": "pawan-kalyan.jpg"}, {"title": "Mahesh Babu", "category": "Heroes", "image": "mahesh-babu.jpg"}, {"title": "Jr NTR", "category": "Heroes", "image": "jr-ntr.jpg"}, {"title": "Ram Charan", "category": "Heroes", "image": "ram-charan.jpg"}, {"title": "Allu Arjun", "category": "Heroes", "image": "allu-arjun.jpg"}, {"title": "Prabhas", "category": "Heroes", "image": "prabhas.jpg"}, {"title": "Nandamuri Balakrishna", "category": "Heroes", "image": "nandamuri-balakrishna.jpg"}, {"title": "Nagarjuna", "category": "Heroes", "image": "nagarjuna.jpg"}, {"title": "Venkatesh", "category": "Heroes", "image": "venkatesh.jpg"}, {"title": "Ravi Teja", "category": "Heroes", "image": "ravi-teja.jpg"}, {"title": "Vijay Deverakonda", "category": "Heroes", "image": "vijay-deverakonda.jpg"}, {"title": "Nani", "category": "Heroes", "image": "nani.jpg"}, {"title": "Ram Pothineni", "category": "Heroes", "image": "ram-pothineni.jpg"}, {"title": "Naga Chaitanya", "category": "Heroes", "image": "naga-chaitanya.jpg"}, {"title": "Varun Tej", "category": "Heroes", "image": "varun-tej.jpg"}, {"title": "Sai Dharam Tej", "category": "Heroes", "image": "sai-dharam-tej.jpg"}, {"title": "Nikhil Siddhartha", "category": "Heroes", "image": "nikhil-siddhartha.jpg"}, {"title": "Adivi Sesh", "category": "Heroes", "image": "adivi-sesh.jpg"}, {"title": "Vishwak Sen", "category": "Heroes", "image": "vishwak-sen.jpg"}, {"title": "Suriya", "category": "Heroes", "image": "suriya.jpg"}, {"title": "Vijay", "category": "Heroes", "image": "vijay.jpg"}, {"title": "Ajith Kumar", "category": "Heroes", "image": "ajith-kumar.jpg"}, {"title": "Dhanush", "category": "Heroes", "image": "dhanush.jpg"}, {"title": "Rajinikanth", "category": "Heroes", "image": "rajinikanth.jpg"}, {"title": "Kamal Haasan", "category": "Heroes", "image": "kamal-haasan.jpg"}, {"title": "Yash", "category": "Heroes", "image": "yash.jpg"}, {"title": "Shah Rukh Khan", "category": "Heroes", "image": "shah-rukh-khan.jpg"}, {"title": "Salman Khan", "category": "Heroes", "image": "salman-khan.jpg"}, {"title": "Aamir Khan", "category": "Heroes", "image": "aamir-khan.jpg"}, {"title": "Hrithik Roshan", "category": "Heroes", "image": "hrithik-roshan.jpg"}, {"title": "Ranbir Kapoor", "category": "Heroes", "image": "ranbir-kapoor.jpg"}, {"title": "Ranveer Singh", "category": "Heroes", "image": "ranveer-singh.jpg"}, {"title": "Amitabh Bachchan", "category": "Heroes", "image": "amitabh-bachchan.jpg"}, {"title": "Samantha", "category": "Heroines", "image": "samantha.jpg"}, {"title": "Anushka Shetty", "category": "Heroines", "image": "anushka-shetty.jpg"}, {"title": "Nayanthara", "category": "Heroines", "image": "nayanthara.jpg"}, {"title": "Sai Pallavi", "category": "Heroines", "image": "sai-pallavi.jpg"}, {"title": "Rashmika Mandanna", "category": "Heroines", "image": "rashmika-mandanna.jpg"}, {"title": "Keerthy Suresh", "category": "Heroines", "image": "keerthy-suresh.jpg"}, {"title": "Kajal Aggarwal", "category": "Heroines", "image": "kajal-aggarwal.jpg"}, {"title": "Tamannaah", "category": "Heroines", "image": "tamannaah.jpg"}, {"title": "Pooja Hegde", "category": "Heroines", "image": "pooja-hegde.jpg"}, {"title": "Sreeleela", "category": "Heroines", "image": "sreeleela.jpg"}, {"title": "Trisha", "category": "Heroines", "image": "trisha.jpg"}, {"title": "Shruti Haasan", "category": "Heroines", "image": "shruti-haasan.jpg"}, {"title": "Mrunal Thakur", "category": "Heroines", "image": "mrunal-thakur.jpg"}, {"title": "Kiara Advani", "category": "Heroines", "image": "kiara-advani.jpg"}, {"title": "Alia Bhatt", "category": "Heroines", "image": "alia-bhatt.jpg"}, {"title": "Deepika Padukone", "category": "Heroines", "image": "deepika-padukone.jpg"}, {"title": "Priyanka Chopra", "category": "Heroines", "image": "priyanka-chopra.jpg"}, {"title": "Katrina Kaif", "category": "Heroines", "image": "katrina-kaif.jpg"}, {"title": "Kriti Sanon", "category": "Heroines", "image": "kriti-sanon.jpg"}, {"title": "Janhvi Kapoor", "category": "Heroines", "image": "janhvi-kapoor.jpg"}, {"title": "Anupama Parameswaran", "category": "Heroines", "image": "anupama-parameswaran.jpg"}, {"title": "Krithi Shetty", "category": "Heroines", "image": "krithi-shetty.jpg"}, {"title": "Meenakshi Chaudhary", "category": "Heroines", "image": "meenakshi-chaudhary.jpg"}, {"title": "Aishwarya Rai", "category": "Heroines", "image": "aishwarya-rai.jpg"}, {"title": "Rakul Preet Singh", "category": "Heroines", "image": "rakul-preet-singh.jpg"}, {"title": "Raashi Khanna", "category": "Heroines", "image": "raashi-khanna.jpg"}, {"title": "Nivetha Thomas", "category": "Heroines", "image": "nivetha-thomas.jpg"}, {"title": "Ritu Varma", "category": "Heroines", "image": "ritu-varma.jpg"}, {"title": "Lord Shiva", "category": "Gods", "image": "lord-shiva.jpg"}, {"title": "Lord Venkateswara", "category": "Gods", "image": "lord-venkateswara.jpg"}, {"title": "Lord Rama", "category": "Gods", "image": "lord-rama.jpg"}, {"title": "Lord Krishna", "category": "Gods", "image": "lord-krishna.jpg"}, {"title": "Lord Hanuman", "category": "Gods", "image": "lord-hanuman.jpg"}, {"title": "Lord Ganesha", "category": "Gods", "image": "lord-ganesha.jpg"}, {"title": "Lord Ayyappa", "category": "Gods", "image": "lord-ayyappa.jpg"}, {"title": "Goddess Durga", "category": "Gods", "image": "goddess-durga.jpg"}, {"title": "Goddess Lakshmi", "category": "Gods", "image": "goddess-lakshmi.jpg"}, {"title": "Goddess Saraswati", "category": "Gods", "image": "goddess-saraswati.jpg"}, {"title": "Goddess Parvati", "category": "Gods", "image": "goddess-parvati.jpg"}, {"title": "Goddess Kali", "category": "Gods", "image": "goddess-kali.jpg"}, {"title": "Lord Vishnu", "category": "Gods", "image": "lord-vishnu.jpg"}, {"title": "Lord Brahma", "category": "Gods", "image": "lord-brahma.jpg"}, {"title": "Lord Narasimha", "category": "Gods", "image": "lord-narasimha.jpg"}, {"title": "Lord Subrahmanya", "category": "Gods", "image": "lord-subrahmanya.jpg"}, {"title": "Radha Krishna", "category": "Gods", "image": "radha-krishna.jpg"}, {"title": "Sai Baba", "category": "Gods", "image": "sai-baba.jpg"}, {"title": "Surya Deva", "category": "Gods", "image": "surya-deva.jpg"}, {"title": "Shani Deva", "category": "Gods", "image": "shani-deva.jpg"}, {"title": "Sports Bike", "category": "Vehicles", "image": "sports-bike.jpg"}, {"title": "Royal Enfield", "category": "Vehicles", "image": "royal-enfield.jpg"}, {"title": "Racing Bike", "category": "Vehicles", "image": "racing-bike.jpg"}, {"title": "Scooter", "category": "Vehicles", "image": "scooter.jpg"}, {"title": "Bicycle", "category": "Vehicles", "image": "bicycle.jpg"}, {"title": "Supercar", "category": "Vehicles", "image": "supercar.jpg"}, {"title": "Luxury Car", "category": "Vehicles", "image": "luxury-car.jpg"}, {"title": "Electric Car", "category": "Vehicles", "image": "electric-car.jpg"}, {"title": "SUV", "category": "Vehicles", "image": "suv.jpg"}, {"title": "Jeep", "category": "Vehicles", "image": "jeep.jpg"}, {"title": "Truck", "category": "Vehicles", "image": "truck.jpg"}, {"title": "Bus", "category": "Vehicles", "image": "bus.jpg"}, {"title": "Tractor", "category": "Vehicles", "image": "tractor.jpg"}, {"title": "Train", "category": "Vehicles", "image": "train.jpg"}, {"title": "Metro Train", "category": "Vehicles", "image": "metro-train.jpg"}, {"title": "Airplane", "category": "Vehicles", "image": "airplane.jpg"}, {"title": "Helicopter", "category": "Vehicles", "image": "helicopter.jpg"}, {"title": "Ship", "category": "Vehicles", "image": "ship.jpg"}, {"title": "Boat", "category": "Vehicles", "image": "boat.jpg"}, {"title": "Formula One Car", "category": "Vehicles", "image": "formula-one-car.jpg"}, {"title": "Mountains", "category": "Nature", "image": "mountains.jpg"}, {"title": "Waterfall", "category": "Nature", "image": "waterfall.jpg"}, {"title": "Forest", "category": "Nature", "image": "forest.jpg"}, {"title": "Beach", "category": "Nature", "image": "beach.jpg"}, {"title": "Sunset", "category": "Nature", "image": "sunset.jpg"}, {"title": "Sunrise", "category": "Nature", "image": "sunrise.jpg"}, {"title": "Flowers", "category": "Nature", "image": "flowers.jpg"}, {"title": "River", "category": "Nature", "image": "river.jpg"}, {"title": "Rain", "category": "Nature", "image": "rain.jpg"}, {"title": "Desert", "category": "Nature", "image": "desert.jpg"}, {"title": "Snow", "category": "Nature", "image": "snow.jpg"}, {"title": "Lake", "category": "Nature", "image": "lake.jpg"}, {"title": "Ocean", "category": "Nature", "image": "ocean.jpg"}, {"title": "Clouds", "category": "Nature", "image": "clouds.jpg"}, {"title": "Village", "category": "Nature", "image": "village.jpg"}, {"title": "Moon", "category": "Nature", "image": "moon.jpg"}, {"title": "Stars", "category": "Nature", "image": "stars.jpg"}, {"title": "Green Fields", "category": "Nature", "image": "green-fields.jpg"}, {"title": "Island", "category": "Nature", "image": "island.jpg"}, {"title": "Rainbow", "category": "Nature", "image": "rainbow.jpg"}, {"title": "Lion", "category": "Animals", "image": "lion.jpg"}, {"title": "Tiger", "category": "Animals", "image": "tiger.jpg"}, {"title": "Elephant", "category": "Animals", "image": "elephant.jpg"}, {"title": "Deer", "category": "Animals", "image": "deer.jpg"}, {"title": "Horse", "category": "Animals", "image": "horse.jpg"}, {"title": "Dog", "category": "Animals", "image": "dog.jpg"}, {"title": "Cat", "category": "Animals", "image": "cat.jpg"}, {"title": "Rabbit", "category": "Animals", "image": "rabbit.jpg"}, {"title": "Panda", "category": "Animals", "image": "panda.jpg"}, {"title": "Monkey", "category": "Animals", "image": "monkey.jpg"}, {"title": "Zebra", "category": "Animals", "image": "zebra.jpg"}, {"title": "Giraffe", "category": "Animals", "image": "giraffe.jpg"}, {"title": "Leopard", "category": "Animals", "image": "leopard.jpg"}, {"title": "Cheetah", "category": "Animals", "image": "cheetah.jpg"}, {"title": "Bear", "category": "Animals", "image": "bear.jpg"}, {"title": "Fox", "category": "Animals", "image": "fox.jpg"}, {"title": "Wolf", "category": "Animals", "image": "wolf.jpg"}, {"title": "Kangaroo", "category": "Animals", "image": "kangaroo.jpg"}, {"title": "Cow", "category": "Animals", "image": "cow.jpg"}, {"title": "Goat", "category": "Animals", "image": "goat.jpg"}, {"title": "Camel", "category": "Animals", "image": "camel.jpg"}, {"title": "Rhinoceros", "category": "Animals", "image": "rhinoceros.jpg"}, {"title": "Hippopotamus", "category": "Animals", "image": "hippopotamus.jpg"}, {"title": "Squirrel", "category": "Animals", "image": "squirrel.jpg"}, {"title": "Peacock", "category": "Birds", "image": "peacock.jpg"}, {"title": "Parrot", "category": "Birds", "image": "parrot.jpg"}, {"title": "Eagle", "category": "Birds", "image": "eagle.jpg"}, {"title": "Owl", "category": "Birds", "image": "owl.jpg"}, {"title": "Flamingo", "category": "Birds", "image": "flamingo.jpg"}, {"title": "Swan", "category": "Birds", "image": "swan.jpg"}, {"title": "Kingfisher", "category": "Birds", "image": "kingfisher.jpg"}, {"title": "Sparrow", "category": "Birds", "image": "sparrow.jpg"}, {"title": "Pigeon", "category": "Birds", "image": "pigeon.jpg"}, {"title": "Hummingbird", "category": "Birds", "image": "hummingbird.jpg"}, {"title": "Crane", "category": "Birds", "image": "crane.jpg"}, {"title": "Duck", "category": "Birds", "image": "duck.jpg"}, {"title": "Rooster", "category": "Birds", "image": "rooster.jpg"}, {"title": "Dove", "category": "Birds", "image": "dove.jpg"}, {"title": "Crow", "category": "Birds", "image": "crow.jpg"}, {"title": "Hornbill", "category": "Birds", "image": "hornbill.jpg"}, {"title": "Falcon", "category": "Birds", "image": "falcon.jpg"}, {"title": "Penguin", "category": "Birds", "image": "penguin.jpg"}, {"title": "Seagull", "category": "Birds", "image": "seagull.jpg"}, {"title": "Woodpecker", "category": "Birds", "image": "woodpecker.jpg"}];
+let currentCategory="All";
+const gallery=document.getElementById("gallery"), search=document.getElementById("search"), count=document.getElementById("count"), none=document.getElementById("none");
 
-    <input
-      type="search"
-      id="search"
-      placeholder="Search Wallpapers..."
-      oninput="searchWallpaper()"
-      autocomplete="off"
-    >
-  </header>
-
-  <nav aria-label="Wallpaper categories">
-    <button type="button" class="filter-btn active" onclick="filterCat('All', this)">All</button>
-    <button type="button" class="filter-btn" onclick="filterCat('Nature', this)">Nature</button>
-    <button type="button" class="filter-btn" onclick="filterCat('Cinema', this)">Cinema</button>
-    <button type="button" class="filter-btn" onclick="filterCat('Devotional', this)">Devotional</button>
-  </nav>
-
-  <main id="gallery">
-
-    <article class="card" data-cat="Nature">
-      <img src="nature1.jpg" alt="Nature wallpaper" loading="lazy" onclick="openImage('nature1.jpg')">
-      <h3>Nature</h3>
-      <div class="buttons">
-        <a class="action-btn download" href="nature1.jpg" download="nature1.jpg">
-          <i class="fa-solid fa-download"></i> Download
-        </a>
-        <button type="button" class="action-btn fullscreen" onclick="openImage('nature1.jpg')" aria-label="Open Nature wallpaper">
-          <i class="fa-solid fa-expand"></i>
-        </button>
-        <button type="button" class="action-btn whatsapp" onclick="shareWhatsApp('Nature Wallpaper', 'nature1.jpg')" aria-label="Share Nature wallpaper">
-          <i class="fa-brands fa-whatsapp"></i>
-        </button>
-      </div>
-    </article>
-
-    <article class="card" data-cat="Cinema">
-      <img src="chiranjeevi.jpg" alt="Chiranjeevi wallpaper" loading="lazy" onclick="openImage('chiranjeevi.jpg')">
-      <h3>Chiranjeevi</h3>
-      <div class="buttons">
-        <a class="action-btn download" href="chiranjeevi.jpg" download="chiranjeevi.jpg">
-          <i class="fa-solid fa-download"></i> Download
-        </a>
-        <button type="button" class="action-btn fullscreen" onclick="openImage('chiranjeevi.jpg')" aria-label="Open Chiranjeevi wallpaper">
-          <i class="fa-solid fa-expand"></i>
-        </button>
-        <button type="button" class="action-btn whatsapp" onclick="shareWhatsApp('Chiranjeevi Wallpaper', 'chiranjeevi.jpg')" aria-label="Share Chiranjeevi wallpaper">
-          <i class="fa-brands fa-whatsapp"></i>
-        </button>
-      </div>
-    </article>
-
-    <article class="card" data-cat="Cinema">
-      <img src="mahesh.jpg" alt="Mahesh Babu wallpaper" loading="lazy" onclick="openImage('mahesh.jpg')">
-      <h3>Mahesh Babu</h3>
-      <div class="buttons">
-        <a class="action-btn download" href="mahesh.jpg" download="mahesh.jpg">
-          <i class="fa-solid fa-download"></i> Download
-        </a>
-        <button type="button" class="action-btn fullscreen" onclick="openImage('mahesh.jpg')" aria-label="Open Mahesh Babu wallpaper">
-          <i class="fa-solid fa-expand"></i>
-        </button>
-        <button type="button" class="action-btn whatsapp" onclick="shareWhatsApp('Mahesh Babu Wallpaper', 'mahesh.jpg')" aria-label="Share Mahesh Babu wallpaper">
-          <i class="fa-brands fa-whatsapp"></i>
-        </button>
-      </div>
-    </article>
-
-    <article class="card" data-cat="Cinema">
-      <img src="ntr.jpg" alt="NTR wallpaper" loading="lazy" onclick="openImage('ntr.jpg')">
-      <h3>NTR</h3>
-      <div class="buttons">
-        <a class="action-btn download" href="ntr.jpg" download="ntr.jpg">
-          <i class="fa-solid fa-download"></i> Download
-        </a>
-        <button type="button" class="action-btn fullscreen" onclick="openImage('ntr.jpg')" aria-label="Open NTR wallpaper">
-          <i class="fa-solid fa-expand"></i>
-        </button>
-        <button type="button" class="action-btn whatsapp" onclick="shareWhatsApp('NTR Wallpaper', 'ntr.jpg')" aria-label="Share NTR wallpaper">
-          <i class="fa-brands fa-whatsapp"></i>
-        </button>
-      </div>
-    </article>
-
-    <article class="card" data-cat="Cinema">
-      <img src="pawan kalyan.jpg" alt="Pawan Kalyan wallpaper" loading="lazy" onclick="openImage('pawan kalyan.jpg')">
-      <h3>Pawan Kalyan</h3>
-      <div class="buttons">
-        <a class="action-btn download" href="pawan kalyan.jpg" download="pawan-kalyan.jpg">
-          <i class="fa-solid fa-download"></i> Download
-        </a>
-        <button type="button" class="action-btn fullscreen" onclick="openImage('pawan kalyan.jpg')" aria-label="Open Pawan Kalyan wallpaper">
-          <i class="fa-solid fa-expand"></i>
-        </button>
-        <button type="button" class="action-btn whatsapp" onclick="shareWhatsApp('Pawan Kalyan Wallpaper', 'pawan kalyan.jpg')" aria-label="Share Pawan Kalyan wallpaper">
-          <i class="fa-brands fa-whatsapp"></i>
-        </button>
-      </div>
-    </article>
-
-    <article class="card" data-cat="Devotional">
-      <img src="lord shiva.jpg" alt="Lord Shiva wallpaper" loading="lazy" onclick="openImage('lord shiva.jpg')">
-      <h3>Lord Shiva</h3>
-      <div class="buttons">
-        <a class="action-btn download" href="lord shiva.jpg" download="lord-shiva.jpg">
-          <i class="fa-solid fa-download"></i> Download
-        </a>
-        <button type="button" class="action-btn fullscreen" onclick="openImage('lord shiva.jpg')" aria-label="Open Lord Shiva wallpaper">
-          <i class="fa-solid fa-expand"></i>
-        </button>
-        <button type="button" class="action-btn whatsapp" onclick="shareWhatsApp('Lord Shiva Wallpaper', 'lord shiva.jpg')" aria-label="Share Lord Shiva wallpaper">
-          <i class="fa-brands fa-whatsapp"></i>
-        </button>
-      </div>
-    </article>
-
-    <article class="card" data-cat="Devotional">
-      <img src="lord ayyappa.jpg" alt="Lord Ayyappa wallpaper" loading="lazy" onclick="openImage('lord ayyappa.jpg')">
-      <h3>Lord Ayyappa</h3>
-      <div class="buttons">
-        <a class="action-btn download" href="lord ayyappa.jpg" download="lord-ayyappa.jpg">
-          <i class="fa-solid fa-download"></i> Download
-        </a>
-        <button type="button" class="action-btn fullscreen" onclick="openImage('lord ayyappa.jpg')" aria-label="Open Lord Ayyappa wallpaper">
-          <i class="fa-solid fa-expand"></i>
-        </button>
-        <button type="button" class="action-btn whatsapp" onclick="shareWhatsApp('Lord Ayyappa Wallpaper', 'lord ayyappa.jpg')" aria-label="Share Lord Ayyappa wallpaper">
-          <i class="fa-brands fa-whatsapp"></i>
-        </button>
-      </div>
-    </article>
-
-  </main>
-
-  <div id="noResults" class="no-results">No wallpapers found.</div>
-
-  <div id="viewer" class="viewer" role="dialog" aria-modal="true" aria-label="Wallpaper preview">
-    <button type="button" class="close" onclick="closeImage()" aria-label="Close preview">&times;</button>
-    <img id="viewerImg" src="" alt="Wallpaper preview">
-  </div>
-
-  <footer>
-    <p>More Wallpapers Coming Soon ❤️</p>
-    <a href="https://instagram.com/Manohar_162" target="_blank" rel="noopener noreferrer">
-      Follow @Manohar_162
-    </a>
-  </footer>
-
-  <script src="script.js"></script>
+function safe(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+function placeholder(title,file){
+ const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000"><rect width="100%" height="100%" fill="#171717"/><text x="50%" y="46%" fill="white" font-family="Arial" font-size="44" text-anchor="middle">${safe(title)}</text><text x="50%" y="53%" fill="#bbb" font-family="Arial" font-size="24" text-anchor="middle">Add image file:</text><text x="50%" y="58%" fill="#ff9800" font-family="Arial" font-size="24" text-anchor="middle">${safe(file)}</text></svg>`;
+ return "data:image/svg+xml;charset=UTF-8,"+encodeURIComponent(svg)
+}
+function imageError(img){
+ if(img.dataset.root==="0"){img.dataset.root="1";img.src=img.dataset.file;return}
+ img.dataset.missing="1";img.closest(".card").classList.add("bad");img.src=placeholder(img.dataset.title,img.dataset.file)
+}
+function render(){
+ gallery.innerHTML="";
+ wallpapers.forEach((w,i)=>{
+  const card=document.createElement("article");card.className="card";card.dataset.title=w.title.toLowerCase();card.dataset.cat=w.category;
+  card.innerHTML=`<div class="wrap"><img src="images/${w.image}" data-file="${safe(w.image)}" data-title="${safe(w.title)}" data-root="0" data-missing="0" alt="${safe(w.title)} wallpaper" loading="lazy"><div class="missing">Required file: ${safe(w.image)}</div></div><h3>${safe(w.title)}</h3><p class="cat">${safe(w.category)}</p><div class="buttons"><button class="action download"><i class="fa-solid fa-download"></i> Download</button><button class="action full"><i class="fa-solid fa-expand"></i></button><button class="action wa"><i class="fa-brands fa-whatsapp"></i></button></div>`;
+  const img=card.querySelector("img");
+  img.onerror=()=>imageError(img);img.onclick=()=>openViewer(img);
+  card.querySelector(".download").onclick=()=>downloadImg(img);
+  card.querySelector(".full").onclick=()=>openViewer(img);
+  card.querySelector(".wa").onclick=()=>shareWA(w.title,img);
+  gallery.appendChild(card)
+ });
+ apply()
+}
+function apply(){
+ const q=search.value.trim().toLowerCase();let shown=0;
+ document.querySelectorAll(".card").forEach(card=>{
+  const ok=(currentCategory==="All"||card.dataset.cat===currentCategory)&&card.dataset.title.includes(q);
+  card.style.display=ok?"":"none";if(ok)shown++
+ });
+ count.textContent=shown+" wallpapers";none.style.display=shown?"none":"block"
+}
+document.querySelectorAll("#filters button").forEach(btn=>btn.onclick=()=>{
+ currentCategory=btn.dataset.cat;document.querySelectorAll("#filters button").forEach(b=>b.classList.remove("active"));btn.classList.add("active");apply()
+});
+search.oninput=apply;
+function openViewer(img){if(img.dataset.missing==="1"){alert("First upload: "+img.dataset.file);return}document.getElementById("viewerImg").src=img.src;document.getElementById("viewer").style.display="flex";document.body.classList.add("lock")}
+function closeViewer(){document.getElementById("viewer").style.display="none";document.getElementById("viewerImg").src="";document.body.classList.remove("lock")}
+document.getElementById("viewer").onclick=e=>{if(e.target.id==="viewer")closeViewer()};
+document.onkeydown=e=>{if(e.key==="Escape")closeViewer()};
+function downloadImg(img){if(img.dataset.missing==="1"){alert("First upload: "+img.dataset.file);return}const a=document.createElement("a");a.href=img.src;a.download=img.dataset.file;document.body.appendChild(a);a.click();a.remove()}
+function shareWA(title,img){let m=`🌟 ${title} Wallpaper\n\nView more wallpapers: ${location.href}`;if(img.dataset.missing!=="1"&&!img.src.startsWith("data:"))m+=`\n\nImage: ${img.src}`;window.open("https://wa.me/?text="+encodeURIComponent(m),"_blank","noopener")}
+render();
+</script>
 </body>
 </html>
