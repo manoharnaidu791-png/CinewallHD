@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>CineWall HD</title>
+
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body>
+  <header>
+    <h1>CineWall HD</h1>
+
+    <input
+      type="search"
+      id="search"
+      placeholder="Search Wallpapers..."
+      oninput="searchWallpaper()"
+      autocomplete="off"
+    >
+  </header>
+
+  <nav aria-label="Wallpaper categories">
+    <button type="button" class="filter-btn active" onclick="filterCat('All', this)">All</button>
+    <button type="button" class="filter-btn" onclick="filterCat('Nature', this)">Nature</button>
+    <button type="button" class="filter-btn" onclick="filterCat('Cinema', this)">Cinema</button>
+    <button type="button" class="filter-btn" onclick="filterCat('Devotional', this)">Devotional</button>
+  </nav>
+
+  <main id="gallery">
+
+    <article class="card" data-cat="Nature">
+      <img src="nature1.jpg" alt="Nature wallpaper" loading="lazy" onclick="openImage('nature1.jpg')">
+      <h3>Nature</h3>
+      <div class="buttons">
+        <a class="action-btn download" href="nature1.jpg" download="nature1.jpg">
+          <i class="fa-solid fa-download"></i> Download
+        </a>
+        <button type="button" class="action-btn fullscreen" onclick="openImage('nature1.jpg')" aria-label="Open Nature wallpaper">
+          <i class="fa-solid fa-expand"></i>
+        </button>
+        <button type="button" class="action-btn whatsapp" onclick="shareWhatsApp('Nature Wallpaper', 'nature1.jpg')" aria-label="Share Nature wallpaper">
+          <i class="fa-brands fa-whatsapp"></i>
+        </button>
+      </div>
+    </article>
+
+    <article class="card" data-cat="Cinema">
+      <img src="chiranjeevi.jpg" alt="Chiranjeevi wallpaper" loading="lazy" onclick="openImage('chiranjeevi.jpg')">
+      <h3>Chiranjeevi</h3>
+      <div class="buttons">
+        <a class="action-btn download" href="chiranjeevi.jpg" download="chiranjeevi.jpg">
+          <i class="fa-solid fa-download"></i> Download
+        </a>
+        <button type="button" class="action-btn fullscreen" onclick="openImage('chiranjeevi.jpg')" aria-label="Open Chiranjeevi wallpaper">
+          <i class="fa-solid fa-expand"></i>
+        </button>
+        <button type="button" class="action-btn whatsapp" onclick="shareWhatsApp('Chiranjeevi Wallpaper', 'chiranjeevi.jpg')" aria-label="Share Chiranjeevi wallpaper">
+          <i class="fa-brands fa-whatsapp"></i>
+        </button>
+      </div>
+    </article>
+
+    <article class="card" data-cat="Cinema">
+      <img src="mahesh.jpg" alt="Mahesh Babu wallpaper" loading="lazy" onclick="openImage('mahesh.jpg')">
+      <h3>Mahesh Babu</h3>
+      <div class="buttons">
+        <a class="action-btn download" href="mahesh.jpg" download="mahesh.jpg">
+          <i class="fa-solid fa-download"></i> Download
+        </a>
+        <button type="button" class="action-btn fullscreen" onclick="openImage('mahesh.jpg')" aria-label="Open Mahesh Babu wallpaper">
+          <i class="fa-solid fa-expand"></i>
+        </button>
+        <button type="button" class="action-btn whatsapp" onclick="shareWhatsApp('Mahesh Babu Wallpaper', 'mahesh.jpg')" aria-label="Share Mahesh Babu wallpaper">
+          <i class="fa-brands fa-whatsapp"></i>
+        </button>
+      </div>
+    </article>
+
+    <article class="card" data-cat="Cinema">
+      <img src="ntr.jpg" alt="NTR wallpaper" loading="lazy" onclick="openImage('ntr.jpg')">
+      <h3>NTR</h3>
+      <div class="buttons">
+        <a class="action-btn download" href="ntr.jpg" download="ntr.jpg">
+          <i class="fa-solid fa-download"></i> Download
+        </a>
+        <button type="button" class="action-btn fullscreen" onclick="openImage('ntr.jpg')" aria-label="Open NTR wallpaper">
+          <i class="fa-solid fa-expand"></i>
+        </button>
+        <button type="button" class="action-btn whatsapp" onclick="shareWhatsApp('NTR Wallpaper', 'ntr.jpg')" aria-label="Share NTR wallpaper">
+          <i class="fa-brands fa-whatsapp"></i>
+        </button>
+      </div>
+    </article>
+
+    <article class="card" data-cat="Cinema">
+      <img src="pawan kalyan.jpg" alt="Pawan Kalyan wallpaper" loading="lazy" onclick="openImage('pawan kalyan.jpg')">
+      <h3>Pawan Kalyan</h3>
+      <div class="buttons">
+        <a class="action-btn download" href="pawan kalyan.jpg" download="pawan-kalyan.jpg">
+          <i class="fa-solid fa-download"></i> Download
+        </a>
+        <button type="button" class="action-btn fullscreen" onclick="openImage('pawan kalyan.jpg')" aria-label="Open Pawan Kalyan wallpaper">
+          <i class="fa-solid fa-expand"></i>
+        </button>
+        <button type="button" class="action-btn whatsapp" onclick="shareWhatsApp('Pawan Kalyan Wallpaper', 'pawan kalyan.jpg')" aria-label="Share Pawan Kalyan wallpaper">
+          <i class="fa-brands fa-whatsapp"></i>
+        </button>
+      </div>
+    </article>
+
+    <article class="card" data-cat="Devotional">
+      <img src="lord shiva.jpg" alt="Lord Shiva wallpaper" loading="lazy" onclick="openImage('lord shiva.jpg')">
+      <h3>Lord Shiva</h3>
+      <div class="buttons">
+        <a class="action-btn download" href="lord shiva.jpg" download="lord-shiva.jpg">
+          <i class="fa-solid fa-download"></i> Download
+        </a>
+        <button type="button" class="action-btn fullscreen" onclick="openImage('lord shiva.jpg')" aria-label="Open Lord Shiva wallpaper">
+          <i class="fa-solid fa-expand"></i>
+        </button>
+        <button type="button" class="action-btn whatsapp" onclick="shareWhatsApp('Lord Shiva Wallpaper', 'lord shiva.jpg')" aria-label="Share Lord Shiva wallpaper">
+          <i class="fa-brands fa-whatsapp"></i>
+        </button>
+      </div>
+    </article>
+
+    <article class="card" data-cat="Devotional">
+      <img src="lord ayyappa.jpg" alt="Lord Ayyappa wallpaper" loading="lazy" onclick="openImage('lord ayyappa.jpg')">
+      <h3>Lord Ayyappa</h3>
+      <div class="buttons">
+        <a class="action-btn download" href="lord ayyappa.jpg" download="lord-ayyappa.jpg">
+          <i class="fa-solid fa-download"></i> Download
+        </a>
+        <button type="button" class="action-btn fullscreen" onclick="openImage('lord ayyappa.jpg')" aria-label="Open Lord Ayyappa wallpaper">
+          <i class="fa-solid fa-expand"></i>
+        </button>
+        <button type="button" class="action-btn whatsapp" onclick="shareWhatsApp('Lord Ayyappa Wallpaper', 'lord ayyappa.jpg')" aria-label="Share Lord Ayyappa wallpaper">
+          <i class="fa-brands fa-whatsapp"></i>
+        </button>
+      </div>
+    </article>
+
+  </main>
+
+  <div id="noResults" class="no-results">No wallpapers found.</div>
+
+  <div id="viewer" class="viewer" role="dialog" aria-modal="true" aria-label="Wallpaper preview">
+    <button type="button" class="close" onclick="closeImage()" aria-label="Close preview">&times;</button>
+    <img id="viewerImg" src="" alt="Wallpaper preview">
+  </div>
+
+  <footer>
+    <p>More Wallpapers Coming Soon ❤️</p>
+    <a href="https://instagram.com/Manohar_162" target="_blank" rel="noopener noreferrer">
+      Follow @Manohar_162
+    </a>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
